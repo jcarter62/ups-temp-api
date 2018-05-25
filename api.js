@@ -130,7 +130,6 @@ router.get('/:id', function (req, res) {
   for (let i = 0; i < sites.length; i++) {
     let thisSiteName = sites[i].name;
     if ( id == thisSiteName ) {
-      console.log('Found site: ' + thisSiteName );
       site = sites[i];
     }
   }
