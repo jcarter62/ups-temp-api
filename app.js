@@ -2,6 +2,20 @@ let express = require('express');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
+// Replace remote-addr with correct remote address.
+// This expects this server to be behind an ngnix server,
+// and the following has been added to the server.location.
+//
+// proxy_set_header X-Real-IP $remote_addr;
+//
+logger.token('remote-addr', function( req, res) {
+    let client = req.headers['x-real-ip'];
+    if ( client <= '' ) {
+      client = req.ip;
+    }
+    return client;
+});
+
 let homeRoute = require('./homeroute');
 let apiRoute = require('./api');
 
