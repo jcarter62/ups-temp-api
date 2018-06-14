@@ -46,21 +46,22 @@ function load1Site(Unit, res, next) {
   let session = new snmp.createSession(Unit.ip, "public");
 
   session.get(OIds,
-    function (err, varbinds) {
+    (err, varBinds) => {
       if (err) {
         console.log('snmp session.get error: %s', err.toString());
-      } else {
+      }
+      else {
 
         let name = "";
         let location = "";
         let data = "";
-        for (let i = 0; i < varbinds.length; i++) {
-          if (snmp.isVarbindError(varbinds[i])) {
-            console.log('snmp.isVarbindError: %s', JSON.stringify(varbinds[i]));
+        for (let i = 0; i < varBinds.length; i++) {
+          if (snmp.isVarbindError(varBinds[i])) {
+            console.log('snmp.isVarbindError: %s', JSON.stringify(varBinds[i]));
           }
           else {
-            let oid = varbinds[i].oid;
-            let dat = varbinds[i].value.toString();
+            let oid = varBinds[i].oid;
+            let dat = varBinds[i].value.toString();
             switch (oid) {
               case Unit.nameoid:
                 name = dat;
@@ -86,7 +87,7 @@ function load1Site(Unit, res, next) {
         if (data >= Unit.alarm) {
           status = "alarm";
         }
-        Unit.results = {
+        let results = {
           name: name,
           temperature: data,
           location: location,
@@ -96,17 +97,14 @@ function load1Site(Unit, res, next) {
           dateNum: Date.parse(timeStamp)
         };
 
-        Unit.message = 'OK';
-        Unit.status = 'ok';
-
-        next(res, Unit);
+        next(res, results);
       }
     });
 }
 
-function sendResults(res, Unit) {
+function sendResults(res, Results) {
   res.status(200);
-  res.send(Unit);
+  res.send(Results);
 }
 
 router.get('/', function( req, res ) {
@@ -123,9 +121,8 @@ router.get('/', function( req, res ) {
   res.send(result);
 });
 
-router.get('/:id', function (req, res) {
-  let id = req.params.id;
-  let site = null;
+let getSiteInfo = (id) => {
+  let site =null;
 
   for (let i = 0; i < sites.length; i++) {
     let thisSiteName = sites[i].name;
@@ -133,6 +130,13 @@ router.get('/:id', function (req, res) {
       site = sites[i];
     }
   }
+
+  return site;
+};
+
+router.get('/:id', function (req, res) {
+  let id = req.params.id;
+  let site = getSiteInfo(id);
 
   if (site != null) {
     load1Site(site, res, sendResults)
