@@ -1,45 +1,9 @@
 let express = require('express');
 let snmp = require('net-snmp');
+let Sites = require('./sites.json');
 let router = express.Router();
 
-let sites = [
-  {
-    "name": "field1",
-    "ip": "192.168.5.99",
-    "nameoid": "1.3.6.1.2.1.1.5.0",
-    "locationoid": "1.3.6.1.2.1.1.6.0",
-    "tempoid": "1.3.6.1.4.1.318.1.1.10.2.3.2.1.4.1",
-    "warn": "80",
-    "alarm": "87"
-  },
-  {
-    "name": "field2",
-    "ip": "192.168.5.96",
-    "nameoid": "1.3.6.1.2.1.1.5.0",
-    "locationoid": "1.3.6.1.2.1.1.6.0",
-    "tempoid": "1.3.6.1.4.1.318.1.1.10.2.3.2.1.4.1",
-    "warn": "80",
-    "alarm": "87"
-  },
-  {
-    "name": "fresno1",
-    "ip": "172.16.100.132",
-    "nameoid": "1.3.6.1.2.1.1.5.0",
-    "locationoid": "1.3.6.1.2.1.1.6.0",
-    "tempoid": "1.3.6.1.4.1.318.1.1.25.1.2.1.5.2.1",
-    "warn": "80",
-    "alarm": "87"
-  },
-  {
-    "name": "fresno2",
-    "ip": "172.16.100.130",
-    "nameoid": "1.3.6.1.2.1.1.5.0",
-    "locationoid": "1.3.6.1.2.1.1.6.0",
-    "tempoid": "1.3.6.1.4.1.318.1.1.10.2.3.2.1.4.1",
-    "warn": "80",
-    "alarm": "87"
-  }
-];
+let sites = Sites.sites;
 
 function load1Site(Unit, res, next) {
   let OIds = [Unit.nameoid, Unit.locationoid, Unit.tempoid];
@@ -107,7 +71,7 @@ function sendResults(res, Results) {
   res.send(Results);
 }
 
-router.get('/', function( req, res ) {
+router.post('/', function( req, res ) {
   let result = {'api': '//' + req.headers.host + req.baseUrl };
   let list = [];
 
@@ -134,8 +98,24 @@ let getSiteInfo = (id) => {
   return site;
 };
 
-router.get('/:id', function (req, res) {
-  let id = req.params.id;
+// router.get('/:id', function (req, res) {
+//   let id = req.params.id;
+//   let site = getSiteInfo(id);
+//
+//   if (site != null) {
+//     load1Site(site, res, sendResults)
+//   } else {
+//     site = {
+//       'name': id,
+//       'message': 'Unknown Site',
+//       'status': 'error'
+//     };
+//     sendResults(res, site);
+//   }
+// });
+
+router.post('/site', function(req, res) {
+  let id = req.body.id;
   let site = getSiteInfo(id);
 
   if (site != null) {
