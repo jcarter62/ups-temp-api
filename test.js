@@ -2,34 +2,23 @@ let express = require('express');
 let sql = require('mssql');
 let router = express.Router();
 
-router.post('/', function( req, res ) {
-  let config = {
-    user: process.env.SQL_USER,
-    password: process.env.SQL_PASS,
-    server: process.env.SQL_HOST,
-    database: process.env.SQL_DB,
-    options: {
-      instanceName: process.env.SQL_INSTANCE,
-      encrypt: true
-    }
-  };
 
+router.post('/', function( req, res ) {
+  let dbConfig = req.app.locals.dbConfig;
   let result = {'api': '//' + req.headers.host + req.baseUrl };
 
-  sql.connect(config, function(err) {
+  sql.connect(dbConfig, function(err) {
     if ( err ) {
       console.dir(err);
       result.error = err;
       res.send(result);
+      sql.close();
+    } else {
+        console.log('Connected');
+        result.status = 'connected';
+        res.send(result);
+        sql.close();
     }
-
-    // Otherwise, we are connected !!
-
-    console.log('Connected');
-
-    result.status = 'connected';
-
-    res.send(result);
   } );
 
   // .then( pool => {

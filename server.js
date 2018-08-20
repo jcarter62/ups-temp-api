@@ -7,14 +7,14 @@
 let app = require('./app');
 let debug = require('debug')('ups-temp:server');
 let http = require('http');
-
 require('dotenv').config();
 
 /**
  * Get port from environment and store in Express.
  */
 
-let port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3000');
+
 app.set('port', port);
 
 /**

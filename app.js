@@ -2,6 +2,9 @@ let express = require('express');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
+let path = require('path');
+let fs = require('fs');
+
 // Replace remote-addr with correct remote address.
 // This expects this server to be behind an ngnix server,
 // and the following has been added to the server.location.
@@ -27,6 +30,14 @@ app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+const dbJSON = __dirname + path.sep + 'db.json';
+let dat = fs.readFileSync( dbJSON, 'utf8');
+const dbConfig = JSON.parse(dat).config;
+app.locals.dbConfig = dbConfig;
+dat = null;
+
+
 
 app.use('/', homeRoute);
 app.use('/api', apiRoute );
