@@ -12,9 +12,11 @@
     "dotenv": "^6.0.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
+    "knex": "^0.15.2",
     "morgan": "~1.9.0",
+    "mssql": "^4.1.0",
     "net-snmp": "^1.2.2",
-    "sqlite3": "^4.0.0"
+    "sqlite3": "^4.0.2"
   },
   "author": "Jim Carter"
 }

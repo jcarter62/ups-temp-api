@@ -18,6 +18,8 @@ logger.token('remote-addr', function( req, res) {
 
 let homeRoute = require('./homeroute');
 let apiRoute = require('./api');
+let authRoute = require('./auth');
+let testRoute = require('./test');
 
 let app = express();
 
@@ -28,6 +30,8 @@ app.use(cookieParser());
 
 app.use('/', homeRoute);
 app.use('/api', apiRoute );
+app.use('/auth', authRoute);
+app.use('/test', testRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res) {

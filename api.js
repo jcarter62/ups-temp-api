@@ -98,22 +98,6 @@ let getSiteInfo = (id) => {
   return site;
 };
 
-// router.get('/:id', function (req, res) {
-//   let id = req.params.id;
-//   let site = getSiteInfo(id);
-//
-//   if (site != null) {
-//     load1Site(site, res, sendResults)
-//   } else {
-//     site = {
-//       'name': id,
-//       'message': 'Unknown Site',
-//       'status': 'error'
-//     };
-//     sendResults(res, site);
-//   }
-// });
-
 router.post('/site', function(req, res) {
   let id = req.body.id;
   let site = getSiteInfo(id);

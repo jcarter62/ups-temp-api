@@ -1,23 +1,22 @@
 let sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./data.sqlite');
 
-module.exports = {
-  sites: [],
+class DB {
+  constructor(res, user, pass ) {
+    this.res = res;
+    this.user = user;
+    this.pass = pass;
+    let db = new sqlite3.Database('./dbfiles/data.db');
+    this.authUser();
+  }
 
-  init: () => {
-    db.serialize(() => {
-        db.run('create table sites (' +
-          'name text, ' +
-          'ip text, ' +
-          'nameoid text, ' +
-          'locationoid text, ' +
-          'tempoid text, ' +
-          'warn float,' +
-          'alarm float ');
+  authUser() {
+    db.serialize((  ) => {
+        db.all('select * from users', (err, results) => {
+          res.send(results);
+          console.log(results);
+        });
       }
     )
   }
-
-
-};
+}
 
