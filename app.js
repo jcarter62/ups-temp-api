@@ -1,4 +1,5 @@
 let express = require('express');
+let bodyParser = require('body-parser');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
@@ -26,18 +27,12 @@ let testRoute = require('./test');
 
 let app = express();
 
+app.use(bodyParser.json({ type: 'application/*+json' }) );
+
 app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-const dbJSON = __dirname + path.sep + 'db.json';
-let dat = fs.readFileSync( dbJSON, 'utf8');
-const dbConfig = JSON.parse(dat).config;
-app.locals.dbConfig = dbConfig;
-dat = null;
-
-
 
 app.use('/', homeRoute);
 app.use('/api', apiRoute );

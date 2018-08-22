@@ -17,16 +17,26 @@ var port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
 
+let dbConfig = {
+  "user": process.env.SQL_USER,
+  "password": process.env.SQL_PASS ,
+  "server":process.env.SQL_HOST,
+  "database":process.env.SQL_DB,
+  "options": {
+    "instanceName":process.env.SQL_INSTANCE,
+    "encrypt":false
+  }
+};
+app.locals.dbConfig = dbConfig;
+
 /**
  * Create HTTP server.
  */
-
 let server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
