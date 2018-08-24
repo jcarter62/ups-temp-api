@@ -1,10 +1,13 @@
 let express = require('express');
 let sql = require('mssql');
 let router = express.Router();
+let uuidv1 = require('uuid/v1');
+let sqlite = require('sqlite3').verbose();
 
 router.post('/', function( req, res ) {
   let dbConfig = req.app.locals.dbConfig;
   let result = {'api': '//' + req.headers.host + req.baseUrl };
+  let sqlitedb = req.app.locals.sqlitedb;
 
   let req_username = '';
   let req_userpass = '';
@@ -36,6 +39,8 @@ router.post('/', function( req, res ) {
             let data = sqlResultl.output;
             if ( data.AuthResult == 'authorized' ) {
               result.status = 'success';
+              result.data = data;
+              createToken(result, sqlitedb );
             } else {
               result.status = 'failed';
             }
@@ -53,6 +58,32 @@ router.post('/', function( req, res ) {
       sql.close();
     }
   } );
+
+  function createToken( data, sqlitedb ) {
+    let uid = uuidv1()  ;
+    data.key = uid;
+
+    //
+    let db = new sqlite.Database( sqlitedb );
+
+    db.serialize( () => {
+      let dbcreate = 'create table if not exists tokens ' +
+        '( token text, name text, email text ) ';
+      let dbinsert = 'insert into tokens values ( ?, ?, ? ) ';
+
+      //      db.run(dbcreate);
+      let stmtCreate = db.prepare(dbcreate);
+      stmtCreate.run();
+      stmtCreate.finalize();
+
+      //
+      let stmt = db.prepare(dbinsert);
+      stmt.run( data.key, data.data.name, data.data.email );
+      stmt.finalize();
+    });
+
+    db.close();
+  }
 
   function myFinal(data, res, sql) {
     sql.close();

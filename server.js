@@ -29,6 +29,8 @@ let dbConfig = {
 };
 app.locals.dbConfig = dbConfig;
 
+app.locals.sqlitedb = process.env.SQLITE_DB;
+
 /**
  * Create HTTP server.
  */
