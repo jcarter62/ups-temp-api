@@ -31,6 +31,11 @@ app.locals.dbConfig = dbConfig;
 
 app.locals.sqlitedb = process.env.SQLITE_DB;
 
+app.locals.debug = false;
+if ( ( process.env.APP_DEBUG ).toLowerCase() == 'true' ) {
+  app.locals.debug = true;
+}
+
 /**
  * Create HTTP server.
  */
